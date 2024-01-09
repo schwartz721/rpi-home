@@ -1,0 +1,14 @@
+[Unit]
+Description=ngrok provides a a static URL that forward to this server as port :5000
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=pi
+ExecStart=ngrok http --domain=helped-flea-evidently.ngrok-free.app 5000
+
+[Install]
+WantedBy=multi-user.target
