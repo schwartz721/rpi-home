@@ -1,6 +1,9 @@
 #!/bin/bash
 
 # Set up the python virtual environment and install dependencies
+sudo apt update
+sudo apt upgrade
+sudo apt install pip
 PY_VERSION=$(ls /usr/bin/python* | grep -o 'python[2-3]\(.[0-9]\+\)$' | head -1)
 sudo apt install $PY_VERSION-venv
 python -m venv venv
@@ -9,8 +12,8 @@ pip install -r requirements.txt
 
 # Move the service files to the correct location
 SERVICE_PATH=/etc/systemd/system
-sudo cp /rpi-home/gunicorn.service $SERVICE_PATH
-sudo cp /rpi-home/ngrok.service $SERVICE_PATH
+sudo cp gunicorn.service $SERVICE_PATH
+sudo cp ngrok.service $SERVICE_PATH
 
 # Enable the services
 sudo systemctl enable gunicorn.service
