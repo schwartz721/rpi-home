@@ -17,9 +17,9 @@ sudo cp gunicorn@.service $SERVICE_PATH
 sudo cp ngrok.service $SERVICE_PATH
 
 # Enable the services
-sudo systemctl enable gunicorn@${PWD}.service
+sudo systemctl enable gunicorn@$(systemd-escape --path $PWD).service
 sudo systemctl enable ngrok.service
 
 # Start the services
-sudo systemctl start gunicorn@${PWD}.service
+sudo systemctl start gunicorn@$(systemd-escape --path $PWD).service
 sudo systemctl start ngrok.service
