@@ -10,4 +10,4 @@ First-time setup:
     - Install git by running `sudo apt install git`
     - Clone this repo by running `git clone https://github.com/schwartz721/rpi-home.git`
 3. Run the command `./rpi-home/setup` to finish the installation and start the server.
-    - This runs a script in the repo that will need you to enter your password so that it can use `sudo` to install packages and create files.
+    - This runs a script in the repo that might need your approval for some steps. The whole process will take several minutes to finish.
