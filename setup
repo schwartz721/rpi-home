@@ -4,6 +4,7 @@
 sudo apt update
 sudo apt upgrade
 sudo apt install pip
+sudo apt install gunicorn
 PY_VERSION=$(ls /usr/bin/python* | grep -o 'python[2-3]\(.[0-9]\+\)$' | head -1)
 sudo apt install $PY_VERSION-venv
 python -m venv venv

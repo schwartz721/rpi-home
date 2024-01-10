@@ -9,7 +9,6 @@ Restart=always
 RestartSec=1
 User=pi
 ExecStartPre=cd ~/rpi-home
-ExecStartPre=source venv/bin/activate
 ExecStart=gunicorn server:app -b 0.0.0.0:5000
 
 [Install]
