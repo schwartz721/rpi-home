@@ -7,7 +7,7 @@ pip install -r requirements.txt
 
 # Install ngrok
 curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null && echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list && sudo apt install ngrok
-ngrok config add-authtoken <token>
+ngrok config add-authtoken 2aYJromJ0rhB9oj54f11SHyFREE_2aNY3Zi6vgxbRTo6g8DTG
 
 # Install gunicorn
 sudo apt install gunicorn
@@ -18,9 +18,9 @@ sudo cp gunicorn@.service $SERVICE_PATH
 sudo cp ngrok.service $SERVICE_PATH
 
 # Enable the services
-sudo systemctl enable gunicorn@$(systemd-escape --path $PWD).service
+sudo systemctl enable gunicorn@$PWD.service
 sudo systemctl enable ngrok.service
 
 # Start the services
-sudo systemctl start gunicorn@$(systemd-escape --path $PWD).service
+sudo systemctl start gunicorn@$PWD.service
 sudo systemctl start ngrok.service
