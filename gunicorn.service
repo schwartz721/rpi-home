@@ -4,12 +4,12 @@ After=network.target
 StartLimitIntervalSec=0
 
 [Service]
-Type=oneshot
+Type=simple
 Restart=always
 RestartSec=1
 User=pi
-ExecStart=cd ~/rpi-home
-ExecStart=source venv/bin/activate
+ExecStartPre=cd ~/rpi-home
+ExecStartPre=source venv/bin/activate
 ExecStart=gunicorn server:app -b 0.0.0.0:5000
 
 [Install]
