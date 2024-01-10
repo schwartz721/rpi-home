@@ -8,7 +8,7 @@ Type=simple
 Restart=always
 RestartSec=1
 User=pi
-ExecStart=gunicorn /$(systemd-escape --unescape %I)/server:app -b 0.0.0.0:5000
+ExecStart=gunicorn /%I/server:app -b 0.0.0.0:5000
 
 [Install]
 WantedBy=multi-user.target
