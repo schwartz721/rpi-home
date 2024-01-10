@@ -8,7 +8,7 @@ Type=simple
 Restart=always
 RestartSec=1
 User=pi
-ExecStart=gunicorn server:app
+ExecStart=cd ~/rpi-home && source venv/bin/activate && gunicorn server:app -b 0.0.0.0:5000
 
 [Install]
 WantedBy=multi-user.target
