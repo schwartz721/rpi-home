@@ -7,7 +7,7 @@ First-time setup:
     - Suggested method is using Raspberry Pi Imager to burn the OS to a micro SD card. Use Advanced Options in Imager to set wifi credentials and enable SSH.
 2. SSH into the RPi and clone this repo from GitHub.
     - From another computer, run `ssh <user>@<IPaddress>`, substituting in the username that you configured in Raspberry Pi Imager and the RPi device's IP address. You can find the IP address by inspecting devices connected to your router. You will then need to enter the password that you configured in Imager.
-    - Install git by running `sudo apt install git`
+    - Install git by running `sudo apt install git -y`
     - Clone this repo by running `git clone https://github.com/schwartz721/rpihome.git`
 3. Run the setup script to finish the installation and start the server.
     - `cd rpihome` to move into the directory containing the repo.
