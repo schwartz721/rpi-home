@@ -13,8 +13,9 @@ sudo tee /etc/apt/sources.list.d/ngrok.list && \
 sudo apt update && sudo apt install ngrok -y
 ngrok config add-authtoken 2aYJromJ0rhB9oj54f11SHyFREE_2aNY3Zi6vgxbRTo6g8DTG
 
-# Install gunicorn
+# Install other dependencies
 sudo apt install gunicorn -y
+sudo apt install python3-rpi.gpio -y
 
 # Move the service files to the correct location
 SERVICE_PATH=/etc/systemd/system
