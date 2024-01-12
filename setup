@@ -1,10 +1,5 @@
 #!/bin/bash
 
-# Set up the python virtual environment and install dependencies
-sudo apt update
-sudo apt install pip -y
-pip install -r requirements.txt
-
 # Install ngrok
 curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | \
 sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null && \
@@ -16,9 +11,7 @@ ngrok config add-authtoken 2aYJromJ0rhB9oj54f11SHyFREE_2aNY3Zi6vgxbRTo6g8DTG
 # Install other dependencies
 sudo apt install gunicorn -y
 sudo apt install pigpio -y
-
-# Use piGPIO as the pin driver
-echo 'export GPIOZERO_PIN_FACTORY=pigpio' >> ~/.bashrc
+sudo apt install flask -y
 
 # Move the service files to the correct location
 SERVICE_PATH=/etc/systemd/system

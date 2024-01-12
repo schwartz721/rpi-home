@@ -7,7 +7,7 @@ app.servo_pin = 25
 # Routes
 @app.route("/")
 def ping():
-    return "pong"
+    return "Pong"
 
 @app.route("/furnace")
 def get_furnace():
