@@ -1,8 +1,8 @@
 from flask import Flask
-from gpiozero import Servo
+import pigpio
 
 app = Flask(__name__)
-app.servo = Servo(25)
+app.servo_pin = 25
 
 # Routes
 @app.route("/")
@@ -11,18 +11,21 @@ def ping():
 
 @app.route("/furnace")
 def get_furnace():
-    # Convert from servo position (from -1 and 1) to furnace setting (from 0 and 10)
-    temp = (app.servo.value + 1) * 5
-    # Return the current furnace setting
-    return f"Furnace is set to {temp}"
+    servo = pigpio.pi()
+    pwm = servo.get_servo_pulsewidth(app.servo_pin)
+    # Convert from servo position (from 700 to 2500) to furnace setting (from 0 to 10)
+    furnace = round((pwm - 700) / 180)
+    return f"Furnace is set to {furnace}"
 
-@app.route("/furnace/<temp>", methods=["POST"])
-def post_furnace(temp):
+@app.route("/furnace/<furnace>", methods=["POST"])
+def post_furnace(furnace):
     try:
-        # Convert from furnace setting (from 0 to 10) to servo position (from -1 to 1)
-        temp = int(temp)
-        app.servo.value = min(1, max(-1, temp / 5 - 1))
-        return f"Setting furnace to {(app.servo.value + 1) * 5}"
+        furnace = int(furnace)
+        # Convert from furnace setting (from 0 to 10) to servo position (from 700 to 2500)
+        pwm = max(700, min(2500, furnace * 180 + 700))
+        servo = pigpio.pi()
+        servo.set_servo_pulsewidth(app.servo_pin, pwm)
+        return f"Setting furnace to {round((pwm - 700) / 180)}"
     except Exception as e:
         return str(e)
 
