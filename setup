@@ -10,8 +10,8 @@ ngrok config add-authtoken 2aYJromJ0rhB9oj54f11SHyFREE_2aNY3Zi6vgxbRTo6g8DTG
 
 # Install other dependencies
 sudo apt install gunicorn -y
-sudo apt install pigpio -y
-sudo apt install flask -y
+sudo apt install pigpio python3-pigpio -y
+sudo apt install python3-flask -y
 
 # Move the service files to the correct location
 SERVICE_PATH=/etc/systemd/system
