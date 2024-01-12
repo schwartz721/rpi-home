@@ -15,16 +15,22 @@ ngrok config add-authtoken 2aYJromJ0rhB9oj54f11SHyFREE_2aNY3Zi6vgxbRTo6g8DTG
 
 # Install other dependencies
 sudo apt install gunicorn -y
-sudo apt install python3-rpi.gpio -y
+sudo apt install pigpio -y
+
+# Use piGPIO as the pin driver
+echo 'export GPIOZERO_PIN_FACTORY=pigpio' >> ~/.bashrc
 
 # Move the service files to the correct location
 SERVICE_PATH=/etc/systemd/system
 sudo cp gunicorn@.service $SERVICE_PATH
 sudo cp ngrok.service $SERVICE_PATH
 
-# Enable the services
-sudo systemctl enable gunicorn@$(systemd-escape $PWD).service
-sudo systemctl enable ngrok.service
 # Start the services
 sudo systemctl start gunicorn@$(systemd-escape $PWD).service
 sudo systemctl start ngrok.service
+sudo systemctl start pigpiod
+
+# Enable the services
+sudo systemctl enable gunicorn@$(systemd-escape $PWD).service
+sudo systemctl enable ngrok.service
+sudo systemctl enable pigpiod
