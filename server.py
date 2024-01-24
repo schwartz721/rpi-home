@@ -24,12 +24,12 @@ def get_furnace():
     furnace = pwm_to_percent(pwm)
     return f"Furnace is set to {furnace}"
 
-@app.route("/furnace/<furnace>", methods=["POST"])
-def post_furnace(furnace):
+@app.route("/furnace/<percent>", methods=["POST"])
+def post_furnace(percent):
     try:
-        furnace = int(furnace)
+        percent = int(percent)
         # Convert from furnace setting (from 0 to 100) to servo position (from 2500 to 700)
-        pwm = max(700, min(2500, furnace * 180 + 700))
+        pwm = percent_to_pwm(percent)
         servo = pigpio.pi()
         servo.set_servo_pulsewidth(app.servo_pin, pwm)
         # After one second, turn the PWM signal off so that the servo doesn't continue to struggle
