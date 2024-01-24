@@ -32,8 +32,9 @@ def post_furnace(furnace):
         pwm = max(700, min(2500, furnace * 180 + 700))
         servo = pigpio.pi()
         servo.set_servo_pulsewidth(app.servo_pin, pwm)
+        # After one second, turn the PWM signal off so that the servo doesn't continue to struggle
         sleep(1)
-        servo.set_servo_pulsewidth(app.servo_pin, None)
+        servo.set_servo_pulsewidth(app.servo_pin, 0)
         return f"Setting furnace to {pwm_to_percent(pwm)}"
     except Exception as e:
         return str(e)
