@@ -64,7 +64,7 @@ def percent_to_servo(percent):
     return max(700, min(2500, (percent - 100) * -18 + 700))
 
 pwm = PWM(27)
-previous_pwm = 0
+previous_pwm = -100
 while True:
     try:
         if time.time() - pwm.last_heartbeat > 5:
