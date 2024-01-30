@@ -80,8 +80,12 @@ while True:
         actual_pwm = pwm.pwm
         if abs(actual_pwm - previous_pwm) / pwm.high >= 0.01:
             percent = pwm.pwm_to_percent(actual_pwm)
-            print(f"Input PWM: {actual_pwm} ({percent}%). Output PWM: {percent_to_servo(percent)}")
+            servo_pwm = percent_to_servo(percent)
+            print(f"Input PWM: {actual_pwm} ({percent}%). Output PWM: {servo_pwm}")
             previous_pwm = pwm.pwm
+            pwm.pi.set_servo_pulsewidth(25, servo_pwm)
+        else:
+            pwm.pi.set_servo_pulsewide(25, 0)
 
         time.sleep(1)
     except (KeyboardInterrupt, SystemExit, Exception) as e:
