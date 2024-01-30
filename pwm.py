@@ -2,9 +2,11 @@ import pigpio
 import time
 
 class PWM:
-    def __init__(self, gpio, ref_gpio=None, frequency=1000, restart_limit=10):
+    def __init__(self, gpio, ref_gpio=None, high=1000, low=91, restart_limit=10):
         self.gpio = gpio
-        self.frequency = frequency
+        self.high = high
+        self.low = low
+        self.range = high - low
         self.ref_gpio = ref_gpio
         self.pi = pigpio.pi()
         self.restart_limit = restart_limit
@@ -48,21 +50,18 @@ class PWM:
             # - the microcontroller isn't sending any PWM signal
             if self.pi.read(self.gpio):
                 # If the pin is high, the PWM is at 100% duty cycle
-                self.pwm = self.frequency
-            elif self.ref_gpio is not None and self.pi.read(self.ref_gpio):
-                # If the reference pin is high that means that the microcontroller does have power,
-                # so if the PWM pin is low that means that the PWM is at 0% duty cycle
-                self.pwm = 0
+                self.pwm = self.high
             else:
-                # If we can't confirm that the microcontroller is powered, set to 20% duty cycle for safety
-                self.pwm = self.frequency * 0.2
+                # If the pin is low, the PWM is at 0% duty cycle
+                self.pwm = 0
     
+    def pwm_to_percent(self, pwm):
+        return round(100 * max(0, min(1, (pwm - self.low) / self.range)))
 
-def percent_to_pwm(percent):
+
+
+def percent_to_servo(percent):
     return max(700, min(2500, (percent - 100) * -18 + 700))
-
-def pwm_to_percent(pwm):
-    return round((pwm - 700) / -18 + 100)
 
 pwm = PWM(27)
 previous_pwm = 0
@@ -78,9 +77,10 @@ while True:
             pwm.setup()
             pwm.restart_count += 1
         
-        if abs(pwm.pwm - previous_pwm) / pwm.frequency >= 0.01:
-            percent = pwm.pwm / pwm.frequency * 100
-            print(f"Input PWM: {pwm.pwm} ({percent}%). Output PWM: {percent_to_pwm(percent)} ({pwm_to_percent(pwm.pwm)}%)")
+        actual_pwm = pwm.pwm
+        if abs(actual_pwm - previous_pwm) / pwm.high >= 0.01:
+            percent = pwm.pwm_to_percent(actual_pwm)
+            print(f"Input PWM: {actual_pwm} ({percent}%). Output PWM: {percent_to_servo(percent)}")
             previous_pwm = pwm.pwm
 
         time.sleep(1)
