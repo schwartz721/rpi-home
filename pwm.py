@@ -85,7 +85,7 @@ while True:
             previous_pwm = pwm.pwm
             pwm.pi.set_servo_pulsewidth(25, servo_pwm)
         else:
-            pwm.pi.set_servo_pulsewide(25, 0)
+            pwm.pi.set_servo_pulsewidth(25, 0)
 
         time.sleep(1)
     except (KeyboardInterrupt, SystemExit, Exception) as e:
