@@ -35,7 +35,7 @@ class PWM:
             pass
 
     def edge(self, gpio, level, tick):
-        self.last_callback = time.time()
+        self.last_heartbeat = time.time()
         if level == 1:
             self.uptick = tick
         elif level == 0:
