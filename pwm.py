@@ -1,13 +1,13 @@
 import pigpio
 import time
+import datetime
 
 class PWM:
-    def __init__(self, gpio, ref_gpio=None, high=1000, low=91, restart_limit=10):
+    def __init__(self, gpio, low=91, high=1000, restart_limit=10):
         self.gpio = gpio
         self.high = high
         self.low = low
         self.range = high - low
-        self.ref_gpio = ref_gpio
         self.pi = pigpio.pi()
         self.restart_limit = restart_limit
         self.restart_count = 0
@@ -47,7 +47,9 @@ class PWM:
             # This means that:
             # - PWM is at 100% duty cycle
             # - PWM is at 0% duty cycle
-            # - the microcontroller isn't sending any PWM signal
+            # There's also the chance that the microcontroller lost power and isn't sending any signal,
+            # but since the R Pi supplies power to the microcontroller, if the microcontroller doesn't
+            # have power then the R Pi doesn't either, so this script won't be running.
             if self.pi.read(self.gpio):
                 # If the pin is high, the PWM is at 100% duty cycle
                 self.pwm = self.high
@@ -57,37 +59,60 @@ class PWM:
     
     def pwm_to_percent(self, pwm):
         return round(100 * max(0, min(1, (pwm - self.low) / self.range)))
+    
+    def pwm_change(self, previous_pwm):
+        return abs(self.pwm - previous_pwm) / self.range >= 0.01
+    
+    @property
+    def percent(self):
+        return self.pwm_to_percent(self.pwm)
 
 
+class Servo:
+    def __init__(self, gpio, low=700, high=2500):
+        self.gpio = gpio
+        self.low = low
+        self.high = high
+        self.range = high - low
+        self.pi = pigpio.pi()
 
-def percent_to_servo(percent):
-    return max(700, min(2500, (percent - 100) * -18 + 700))
+    def percent_to_pwm(self, percent): # percent is 0 to 100
+        return max(self.low, min(self.high, (percent - 100) / 100 * -range + self.low))
+    
+    def set_percent(self, percent):
+        pwm = self.percent_to_pwm(percent)
+        self.pi.set_servo_pulsewidth(self.gpio, pwm)
+    
+    def release(self):
+        self.pi.set_servo_pulsewidth(self.gpio, 0)
+
 
 pwm = PWM(27)
-previous_pwm = -100
+servo = Servo(25)
+previous_pwm = -100 # Set initial PWM at an unreachable value so that the first loop is guaranteed to update the value
 while True:
     try:
         if time.time() - pwm.last_heartbeat > 5:
             if pwm.restart_count >= pwm.restart_limit:
-                print("Restart limit reached. Exiting.")
+                print(f"{datetime.datetime.now()} - Restart limit reached. Exiting.")
                 pwm.teardown()
                 break
             # The pigpio callback and/or watchdog has failed. Try restarting them.
-            print("No heartbeat. Restarting.")
+            print(f"{datetime.datetime.now()} - No heartbeat. Restarting.")
             pwm.setup()
             pwm.restart_count += 1
         
         actual_pwm = pwm.pwm
-        if abs(actual_pwm - previous_pwm) / pwm.high >= 0.01:
-            percent = pwm.pwm_to_percent(actual_pwm)
-            servo_pwm = percent_to_servo(percent)
-            print(f"Input PWM: {actual_pwm} ({percent}%). Output PWM: {servo_pwm}")
-            previous_pwm = pwm.pwm
-            pwm.pi.set_servo_pulsewidth(25, servo_pwm)
+        actual_percent = pwm.percent
+        if pwm.pwm_change(previous_pwm):
+            print(f"{datetime.datetime.now()} - Input PWM: {actual_pwm} ({actual_percent}%).")
+            previous_pwm = actual_pwm
+            servo.set_percent(actual_percent)
         else:
-            pwm.pi.set_servo_pulsewidth(25, 0)
+            servo.release()
 
         time.sleep(1)
     except (KeyboardInterrupt, SystemExit, Exception) as e:
         pwm.teardown()
+        print(f"{datetime.datetime.now()} - Encountered error: {e}.")
         raise
