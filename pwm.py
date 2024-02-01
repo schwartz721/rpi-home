@@ -77,7 +77,7 @@ class Servo:
         self.pi = pigpio.pi()
 
     def percent_to_pwm(self, percent): # percent is 0 to 100
-        return max(self.low, min(self.high, (percent - 100) / 100 * -range + self.low))
+        return max(self.low, min(self.high, (percent - 100) / 100 * -self.range + self.low))
     
     def set_percent(self, percent):
         pwm = self.percent_to_pwm(percent)

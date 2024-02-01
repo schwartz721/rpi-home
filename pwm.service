@@ -8,7 +8,7 @@ Type=simple
 Restart=always
 RestartSec=60
 User=pi
-ExecStart=cd /home/pi/rpihome && python3 pwm.py
+ExecStart=python3 /home/pi/rpihome/pwm.py
 
 [Install]
 WantedBy=multi-user.target
