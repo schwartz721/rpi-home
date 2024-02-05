@@ -8,6 +8,7 @@ Type=simple
 Restart=always
 RestartSec=60
 User=pi
+Environment=PYTHONUNBUFFERED=1
 ExecStart=python3 /home/pi/rpihome/pwm.py
 
 [Install]
