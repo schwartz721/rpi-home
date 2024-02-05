@@ -88,7 +88,7 @@ class Servo:
         self.pi.set_servo_pulsewidth(self.gpio, 0)
 
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
 
 pwm = PWM(27)
 servo = Servo(25)
@@ -97,18 +97,18 @@ while True:
     try:
         if time.time() - pwm.last_heartbeat > 5:
             if pwm.restart_count >= pwm.restart_limit:
-                logging.info(f"{datetime.datetime.now()} - Restart limit reached. Exiting.")
+                logging.info("Restart limit reached. Exiting.")
                 pwm.teardown()
                 break
             # The pigpio callback and/or watchdog has failed. Try restarting them.
-            logging.info(f"{datetime.datetime.now()} - No heartbeat. Restarting.")
+            logging.info("No heartbeat. Restarting.")
             pwm.setup()
             pwm.restart_count += 1
         
         actual_pwm = pwm.pwm
         actual_percent = pwm.percent
         if pwm.pwm_change(previous_pwm):
-            logging.info(f"{datetime.datetime.now()} - Input PWM: {actual_pwm} ({actual_percent}%).")
+            logging.info(f"Input PWM: {actual_pwm} ({actual_percent}%).")
             previous_pwm = actual_pwm
             servo.set_percent(actual_percent)
         else:
@@ -117,5 +117,5 @@ while True:
         time.sleep(1)
     except (KeyboardInterrupt, SystemExit, Exception) as e:
         pwm.teardown()
-        logging.info(f"{datetime.datetime.now()} - Encountered error: {e}.")
+        logging.info(f"Encountered error: {e}.")
         raise
