@@ -17,8 +17,8 @@ def journal():
     for _ in range(10):
         entry = reader.get_previous()
         if entry:
-            timestamp = entry.__REALTIME_TIMESTAMP
-            response += f"{timestamp.strftime('%b %d %H:%M:%S')} - {entry.MESSAGE}\n"
+            timestamp = entry["__REALTIME_TIMESTAMP"]
+            response += f"{timestamp.strftime('%b %d %H:%M:%S')} - {entry['MESSAGE']}\n"
     reader.close()
     return response
 
