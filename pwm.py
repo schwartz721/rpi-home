@@ -1,6 +1,5 @@
 import pigpio
 import time
-import datetime
 import logging
 
 class PWM:
@@ -88,7 +87,7 @@ class Servo:
         self.pi.set_servo_pulsewidth(self.gpio, 0)
 
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
+logging.basicConfig(level=logging.INFO, format="%(message)s")
 
 pwm = PWM(27)
 servo = Servo(25)
