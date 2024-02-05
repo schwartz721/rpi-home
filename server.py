@@ -19,6 +19,8 @@ def journal():
         if entry:
             timestamp = entry.__REALTIME_TIMESTAMP
             response += f"{timestamp.strftime('%b %d %H:%M:%S')} - {entry.MESSAGE}\n"
+    reader.close()
+    return response
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0')
