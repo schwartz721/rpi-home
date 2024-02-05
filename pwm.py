@@ -88,6 +88,8 @@ class Servo:
         self.pi.set_servo_pulsewidth(self.gpio, 0)
 
 
+logging.basicConfig(level=logging.INFO)
+
 pwm = PWM(27)
 servo = Servo(25)
 previous_pwm = -100 # Set initial PWM at an unreachable value so that the first loop is guaranteed to update the value
