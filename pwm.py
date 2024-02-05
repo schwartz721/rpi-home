@@ -1,6 +1,7 @@
 import pigpio
 import time
 import datetime
+import logging
 
 class PWM:
     def __init__(self, gpio, low=91, high=1000, restart_limit=10):
@@ -94,18 +95,18 @@ while True:
     try:
         if time.time() - pwm.last_heartbeat > 5:
             if pwm.restart_count >= pwm.restart_limit:
-                print(f"{datetime.datetime.now()} - Restart limit reached. Exiting.")
+                logging.info(f"{datetime.datetime.now()} - Restart limit reached. Exiting.")
                 pwm.teardown()
                 break
             # The pigpio callback and/or watchdog has failed. Try restarting them.
-            print(f"{datetime.datetime.now()} - No heartbeat. Restarting.")
+            logging.info(f"{datetime.datetime.now()} - No heartbeat. Restarting.")
             pwm.setup()
             pwm.restart_count += 1
         
         actual_pwm = pwm.pwm
         actual_percent = pwm.percent
         if pwm.pwm_change(previous_pwm):
-            print(f"{datetime.datetime.now()} - Input PWM: {actual_pwm} ({actual_percent}%).")
+            logging.info(f"{datetime.datetime.now()} - Input PWM: {actual_pwm} ({actual_percent}%).")
             previous_pwm = actual_pwm
             servo.set_percent(actual_percent)
         else:
@@ -114,5 +115,5 @@ while True:
         time.sleep(1)
     except (KeyboardInterrupt, SystemExit, Exception) as e:
         pwm.teardown()
-        print(f"{datetime.datetime.now()} - Encountered error: {e}.")
+        logging.info(f"{datetime.datetime.now()} - Encountered error: {e}.")
         raise
